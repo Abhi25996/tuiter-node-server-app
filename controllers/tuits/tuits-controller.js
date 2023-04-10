@@ -1,9 +1,7 @@
-import * as tuitsDao from '../../tuits/tuits-dao.js'
+import * as tuitsDao from './tuits-dao.js'
 
 const createTuit = async (req, res) => {
-    const tuits = await tuitsDao.findTuits()
     const newTuit = req.body;
-    newTuit._id = (new Date()).getTime()+'';
     newTuit.likes = 0;
     newTuit.liked = false;
     newTuit.replies = 0;
@@ -14,12 +12,13 @@ const createTuit = async (req, res) => {
     newTuit.username = "nasa"
     newTuit.handle="nasa"
     newTuit.title = newTuit.tuit.substring(0,newTuit.tuit.length>50? 50: newTuit.tuit.length)
-    tuits.push(newTuit);
     const insertedTuit = await tuitsDao
         .createTuit(newTuit);
     res.json(insertedTuit);
 }
-const findTuits  = (req, res) => {
+const findTuits  = async (req, res) => {
+    const tuits = await tuitsDao.findTuits()
+
     res.json(tuits);
 }
 
@@ -30,16 +29,18 @@ const updateTuit = async(req, res) => {
     const status = await tuitsDao
         .updateTuit(tuitdIdToUpdate,
             updates);
-    res.sendStatus(200);
+
     res.json(status);
+    res.sendStatus(200);
 
 }
 const deleteTuit = async(req, res) => {
     const tuitdIdToDelete = req.params.tid;
     const status = await tuitsDao
         .deleteTuit(tuitdIdToDelete);
-    res.sendStatus(200);
+
     res.json(status);
+    res.sendStatus(200);
 }
 
 export default (app) => {
